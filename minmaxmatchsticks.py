@@ -28,8 +28,6 @@ class game:
             moves.append(1)
         elif self.stanje == 1:
             moves.append(1)
-        else:
-            moves = []
         
         return moves
     
@@ -43,7 +41,7 @@ class game:
         
     def pobjednik(self):
         if self.igraPrvi == True:
-            return "P2"
+            return "P2"        
         else:
             return "P1"        
         
@@ -55,34 +53,36 @@ class game:
         
 counter = 0
 
-def minimax(igra):
+def minimax(igra, mo):
     global counter
     counter += 1
     if igra.game_over() == True:
-        if igra.pobjednik() == "P1":
-            return 100
-        elif igra.pobjednik() == "P2":
-            return -100
+        if igra.pobjednik() == "P2":
+            return 100, mo
+        elif igra.pobjednik() == "P1":
+            return -100, mo
         else:
-            return 0
+            return 0, mo
     if igra.igraPrvi == False:
         maxv = -1000
         for m in igra.all_moves():
             igra.move(m)
-            v = minimax(igra)
+            v, mm = minimax(igra, m)
             igra.undo(m)
             if v > maxv:
                 maxv = v
-        return maxv
+                maxm = m
+        return maxv, maxm
     else:
         minv = 1000
         for m in igra.all_moves():
             igra.move(m)
-            v = minimax(igra)
+            v, mm = minimax(igra, m)
             igra.undo(m)
             if v < minv:
                 minv = v
-        return minv
+                minm = m
+        return minv, minm
    
 def play():
     while game.game_over() == False:
@@ -101,11 +101,8 @@ def play():
             if game.game_over():
                 print("Pobjednik: "+game.pobjednik())
             else:            
-                i = minimax(game)
-                if i == 100:
-                    game.move(2)
-                else:
-                    game.move(1)
+                i, m = minimax(game, 0)
+                game.move(m)
                 
                 if game.game_over():
                     print("Pobjednik: "+game.pobjednik())
@@ -159,6 +156,11 @@ def podrezivanje():
     print("Bez podrezivanja: ",perft(game))
     
 game = game()
+play()
+
+
+
+
 
 
     
